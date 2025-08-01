@@ -84,7 +84,7 @@ AnimatorController:
   m_Name: ToolSlot
   serializedVersion: 5
   m_AnimatorParameters:
-  - m_Name: isLeafPicking
+  - m_Name: isUse
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
@@ -220,7 +220,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: isLeafPicking
+    m_ConditionEvent: isUse
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 300670259845471310}
@@ -245,7 +245,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 2
-    m_ConditionEvent: isLeafPicking
+    m_ConditionEvent: isUse
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 3641284706570813495}

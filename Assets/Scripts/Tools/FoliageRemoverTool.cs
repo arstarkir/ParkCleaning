@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -8,7 +9,7 @@ public class FoliageRemoverTool : CoreTool
     [SerializeField] TriggerTracker triggerTracker;
     public float maxDist = 2;
 
-    Health curFoliage;
+    GameObject curFoliage;
 
     public override void TryUse(InputAction.CallbackContext context)
     {
@@ -36,9 +37,11 @@ public class FoliageRemoverTool : CoreTool
         List<Collider> hits = triggerTracker.GetContents();
         foreach (Collider hit in hits)
         {
-            if (!hit.CompareTag("Foliage"))
+            if (!hit.TryGetComponent<MultiHealth>(out MultiHealth mHealth))
                 continue;
-            curFoliage = hit.GetComponent<Health>();
+            foreach (Transform t in mHealth.transform)
+                if(t.CompareTag("Foliage"))
+                    curFoliage = t.gameObject;
         }
 
         if(curFoliage == null)
@@ -51,8 +54,11 @@ public class FoliageRemoverTool : CoreTool
 
         if (curFoliage != null)
         {
-            Debug.Log(Vector3.Distance(curFoliage.transform.position, transform.position));
-            curFoliage.RequestChangeHealthServerRpc(-dmg * Time.deltaTime);
+            //Debug.Log(Vector3.Distance(curFoliage.transform.position, transform.position));
+            if (curFoliage.TryGetComponent<Health>(out Health health))
+                health.RequestChangeHealthServerRpc(-dmg * Time.deltaTime);
+            if (curFoliage.transform.root.TryGetComponent<MultiHealth>(out MultiHealth mHealth))
+                mHealth.RequestChangeHealthServerRpc(curFoliage.transform.root.GetComponent<NetworkObject>(), -dmg * Time.deltaTime, curFoliage.name);
         }
     }
 }

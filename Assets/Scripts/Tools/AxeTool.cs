@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
 public class AxeTool : CoreTool
@@ -13,7 +14,10 @@ public class AxeTool : CoreTool
         {
             if (!hit.CompareTag("Tree"))
                 continue;
-            hit.GetComponent<Health>().RequestChangeHealthServerRpc(-dmg);
+            if (hit.TryGetComponent<Health>(out Health health))
+                health.RequestChangeHealthServerRpc(-dmg);
+            if (hit.TryGetComponent<MultiHealth>(out MultiHealth mHealth))
+                mHealth.RequestChangeHealthServerRpc(hit.transform.GetComponentInParent<NetworkObject>(), -dmg, hit.name);
         }
     }
 }

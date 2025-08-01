@@ -18,6 +18,7 @@ public class TriggerTracker : MonoBehaviour
 
     public List<Collider> GetContents()
     {
+        inside.RemoveAll(col => col == null);
         return inside;
     }
 }

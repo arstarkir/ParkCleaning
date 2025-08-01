@@ -372,7 +372,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
-  cursorLockMode: 0
+  cursorLockMode: 1
   axes: 0
   sensitivityX: 5
   sensitivityY: 5
@@ -757,6 +757,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 6281593428217936078, guid: 1fa4863a1119b794b8451f536d2896e3, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3379335544261831163}
+    - targetCorrespondingSourceObject: {fileID: 6281593428217936078, guid: 1fa4863a1119b794b8451f536d2896e3, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3835872580145603834}
   m_SourcePrefab: {fileID: 100100000, guid: 1fa4863a1119b794b8451f536d2896e3, type: 3}
 --- !u!114 &319958524245239321 stripped
 MonoBehaviour:
@@ -791,3 +794,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00742ef0b8e064c4d96e9afc1e65b62f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!135 &3835872580145603834
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7308632147275724362}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.3
+  m_Center: {x: -0.5, y: 0.5, z: 0}
