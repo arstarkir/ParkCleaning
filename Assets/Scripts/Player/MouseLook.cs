@@ -1,7 +1,8 @@
 using UnityEngine;
 using System.Collections;
+using Unity.Netcode;
 
-public class MouseLook : MonoBehaviour
+public class MouseLook : NetworkBehaviour
 {
     [SerializeField] CursorLockMode cursorLockMode = CursorLockMode.None;
 
@@ -25,6 +26,9 @@ public class MouseLook : MonoBehaviour
 
     void Start()
     {
+        if (!IsLocalPlayer)
+            gameObject.SetActive(false);
+
         Cursor.lockState = cursorLockMode;
         originalRotation = transform.localRotation;
     }

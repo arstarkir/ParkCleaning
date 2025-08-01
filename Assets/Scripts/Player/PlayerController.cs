@@ -14,8 +14,8 @@ public class PlayerController : NetworkBehaviour
 
     void Start()
     {
-        //if(!IsLocalPlayer)
-        //    this.enabled = false;
+        if (!IsLocalPlayer)
+            this.enabled = false;
 
         rb = GetComponent<Rigidbody>();
     }
