@@ -1,21 +1,24 @@
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public abstract class CoreTool : NetworkBehaviour
 {
     [SerializeField] float cooldown = 1f;
     float timer;
+    public float dmg = 3;
+
+    [HideInInspector] public Animator animator;
 
     public bool Ready => timer <= 0f;
 
-    public void TryUse()
+    public virtual void TryUse(InputAction.CallbackContext context)
     {
         if (!IsLocalPlayer || !Ready )
             return;
 
         timer = cooldown;
         Use();
-        GetComponent<Animator>().SetTrigger("Use");
     }
 
     public abstract void Use();
@@ -25,7 +28,12 @@ public abstract class CoreTool : NetworkBehaviour
         //puting the tool on the back
     }
 
-    void Update()
+    public override void OnNetworkSpawn()
+    {
+        animator = GetComponent<Animator>();
+    }
+
+    public virtual void Update()
     {
         timer -= Time.deltaTime;
     }

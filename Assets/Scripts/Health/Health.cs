@@ -1,6 +1,7 @@
 using Unity.Netcode;
 using Unity.Netcode.Components;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Health : NetworkBehaviour
 {
@@ -11,6 +12,7 @@ public class Health : NetworkBehaviour
     public float timeSinceDmg = 0;
 
     [SerializeField] GameObject onDmgVFX;
+    public UnityEvent onDeath = new UnityEvent();
 
     private void Awake()
     {
@@ -41,12 +43,13 @@ public class Health : NetworkBehaviour
 
         if (curHealth.Value <= 0)
         {
-            gameObject.AddComponent<NetworkTransform>();
-            transform.position += Vector3.up;
-            gameObject.AddComponent<NetworkRigidbody>().UseRigidBodyForMotion = true;
-            gameObject.GetComponent<Rigidbody>().isKinematic = false;
-            //this.transform.GetComponent<NetworkObject>().Despawn();
-            //Destroy(this.gameObject);
+            if(onDeath != new UnityEvent())
+                onDeath.Invoke();
+            else
+            {
+                this.transform.GetComponent<NetworkObject>().Despawn();
+                Destroy(this.gameObject);
+            }
         }
     }
 

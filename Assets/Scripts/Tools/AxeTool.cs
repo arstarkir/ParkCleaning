@@ -3,28 +3,17 @@ using UnityEngine;
 
 public class AxeTool : CoreTool
 {
-    public float dmg = 3;
-
-    List<Collider> inside = new List<Collider>();
+    [SerializeField] TriggerTracker triggerTracker;
 
     public override void Use()
     {
-        foreach (Collider hit in inside)
+        animator.SetTrigger("Use");
+        List<Collider> hits = triggerTracker.GetContents();
+        foreach (Collider hit in hits)
         {
-            if (!hit.CompareTag("tree"))
+            if (!hit.CompareTag("Tree"))
                 continue;
             hit.GetComponent<Health>().RequestChangeHealthServerRpc(-dmg);
         }
-    }
-
-    void OnTriggerEnter(Collider other)
-    {
-        if (!inside.Contains(other))
-            inside.Add(other);
-    }
-
-    void OnTriggerExit(Collider other)
-    {
-        inside.Remove(other);
     }
 }

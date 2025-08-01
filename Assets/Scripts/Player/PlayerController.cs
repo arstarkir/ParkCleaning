@@ -12,7 +12,9 @@ public class PlayerController : NetworkBehaviour
     [SerializeField] float sprintSpeed = 2f;
     bool isSprinting = false;
     Vector2 _moveInput;
-    
+
+    [SerializeField] FoliageRemoverTool foliageRemover;
+
     void Start()
     {
         if (!IsLocalPlayer)
@@ -30,6 +32,11 @@ public class PlayerController : NetworkBehaviour
     public void OnMove(InputAction.CallbackContext context)
     {
         _moveInput = context.ReadValue<Vector2>();
+    }
+
+    public void OnUseR(InputAction.CallbackContext context)
+    {
+        foliageRemover.TryUse(context);
     }
 
     public void OnSprint(InputAction.CallbackContext context)
