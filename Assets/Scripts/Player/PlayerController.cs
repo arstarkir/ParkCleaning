@@ -6,18 +6,20 @@ public class PlayerController : NetworkBehaviour
 {
     [SerializeField] GameObject mCam;
     Rigidbody rb;
+    Animator toolAniamtor;
 
     [SerializeField] float speed = 1.5f;
     [SerializeField] float sprintSpeed = 2f;
     bool isSprinting = false;
     Vector2 _moveInput;
-
+    
     void Start()
     {
         if (!IsLocalPlayer)
             this.enabled = false;
 
         rb = GetComponent<Rigidbody>();
+        toolAniamtor = GetComponent<ToolHandler>().curTool.gameObject.GetComponent<Animator>();
     }
 
     void Update()
@@ -32,8 +34,11 @@ public class PlayerController : NetworkBehaviour
 
     public void OnSprint(InputAction.CallbackContext context)
     {
-
         isSprinting = context.ReadValue<float>() == 1 ? true : false;
+        if(isSprinting)
+            toolAniamtor.SetBool("isWalking", true);
+        else
+            toolAniamtor.SetBool("isWalking", false);
     }
 
     void PlayerMove()

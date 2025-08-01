@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 2991284043945835449}
   - component: {fileID: 1712933039016110509}
   - component: {fileID: 5995088910732203884}
+  - component: {fileID: 3905026953748146333}
   m_Layer: 0
   m_Name: Axe
   m_TagString: Untagged
@@ -28,7 +29,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6281593428217936078}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.31709793, y: 0.56030655, z: -0.4056197, w: 0.64882827}
+  m_LocalRotation: {x: 0.3170971, y: 0.56030744, z: -0.40561846, w: 0.6488288}
   m_LocalPosition: {x: -0.3070928, y: -0.24339768, z: 0.5009852}
   m_LocalScale: {x: 1, y: 1.5013, z: 1}
   m_ConstrainProportionsScale: 0
@@ -133,3 +134,17 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &3905026953748146333
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6281593428217936078}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dcc03c3742e54b749a7f82b1bf482da9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  cooldown: 1
