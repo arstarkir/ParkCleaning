@@ -1,4 +1,5 @@
 using Unity.Netcode;
+using Unity.Netcode.Components;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -8,7 +9,7 @@ public abstract class CoreTool : NetworkBehaviour
     float timer;
     public float dmg = 3;
 
-    [HideInInspector] public Animator animator;
+    [HideInInspector] public NetworkAnimator animator;
 
     public bool Ready => timer <= 0f;
 
@@ -30,7 +31,7 @@ public abstract class CoreTool : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
-        animator = GetComponent<Animator>();
+        animator = GetComponent<NetworkAnimator>();
     }
 
     public virtual void Update()

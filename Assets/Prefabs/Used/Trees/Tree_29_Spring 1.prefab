@@ -274,7 +274,7 @@ GameObject:
   - component: {fileID: 3732602115857485160}
   m_Layer: 13
   m_Name: Tree_29_p2_Spring
-  m_TagString: Untagged
+  m_TagString: Foliage
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

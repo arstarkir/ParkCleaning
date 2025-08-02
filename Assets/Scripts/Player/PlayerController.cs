@@ -1,4 +1,5 @@
 using Unity.Netcode;
+using Unity.Netcode.Components;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -6,7 +7,7 @@ public class PlayerController : NetworkBehaviour
 {
     [SerializeField] GameObject mCam;
     Rigidbody rb;
-    Animator toolAniamtor;
+    NetworkAnimator toolAniamtor;
 
     [SerializeField] float speed = 1.5f;
     [SerializeField] float sprintSpeed = 2f;
@@ -15,6 +16,8 @@ public class PlayerController : NetworkBehaviour
 
     [SerializeField] FoliageRemoverTool foliageRemover;
 
+    public NetworkVariable<bool> IsWalking = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    
     void Start()
     {
         if (!IsOwner)
@@ -31,11 +34,13 @@ public class PlayerController : NetworkBehaviour
         playerInput.ActivateInput();
 
         rb = GetComponent<Rigidbody>();
-        toolAniamtor = GetComponent<ToolHandler>().curTool.gameObject.GetComponent<Animator>();
+        toolAniamtor = GetComponent<ToolHandler>().curTool.gameObject.GetComponent<NetworkAnimator>();
     }
 
     void Update()
     {
+        toolAniamtor.Animator.SetBool("isWalking", IsWalking.Value);
+
         PlayerMove();
     }
 
@@ -52,10 +57,9 @@ public class PlayerController : NetworkBehaviour
     public void OnSprint(InputAction.CallbackContext context)
     {
         isSprinting = context.ReadValue<float>() == 1 ? true : false;
-        if(isSprinting)
-            toolAniamtor.SetBool("isWalking", true);
-        else
-            toolAniamtor.SetBool("isWalking", false);
+
+        if (IsOwner)
+            IsWalking.Value = isSprinting;
     }
 
     void PlayerMove()

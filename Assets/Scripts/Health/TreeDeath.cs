@@ -17,6 +17,7 @@ public class TreeDeath : CoreDeath
         fallenTree.GetComponent<NetworkObject>().Spawn();
 
         MultiHealth multiHealth = fallenTree.GetComponent<MultiHealth>();
+        multiHealth.GetComponent<Transform>().localScale = this.GetComponent<Transform>().localScale;
         multiHealth.AddObject(fallenTree.transform, 9, fallenTree.GetComponent<WoodDeath>().OnDeath);
         LeavesSetUp(multiHealth, fallenTree);
     }
