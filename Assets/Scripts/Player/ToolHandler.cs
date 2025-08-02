@@ -7,7 +7,6 @@ public class ToolHandler : MonoBehaviour
 
     public void OnUseL(InputAction.CallbackContext context)
     {
-        if (context.ReadValue<float>() == 1)
-            curTool.TryUse(context);
+        curTool.TryUse(context);
     }
 }
