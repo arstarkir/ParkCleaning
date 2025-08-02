@@ -6,7 +6,6 @@ using UnityEngine.Events;
 
 public class TreeDeath : CoreDeath
 {
-    public GameObject leaves;
     [SerializeField] GameObject tree;
 
     public override void OnDeath()
@@ -26,7 +25,7 @@ public class TreeDeath : CoreDeath
     {
         foreach (Transform t in fallenTree.transform)
         {
-            multiHealth.AddObject(t.transform, 15);
+            multiHealth.AddObject(t.transform, 25);
             t.tag = "Foliage";
         }
 
