@@ -8,10 +8,10 @@ public class ObjectMoverTool : CoreTool
     [SerializeField] float dist = 3f;
     [SerializeField] float holdForce = 250f;
     [SerializeField] float damping = 5f;
+    [SerializeField] LayerMask layerMask;
 
     Rigidbody rb;
     Vector3 moveOffset;
-    float originalAngularDamping;
     bool isHolding;
 
     public override void TryUse(InputAction.CallbackContext context)
@@ -24,7 +24,7 @@ public class ObjectMoverTool : CoreTool
         else
             if(!isHolding)
                 StartGrab();
-
+        
         base.TryUse(context);
     }
 
@@ -53,16 +53,15 @@ public class ObjectMoverTool : CoreTool
     private void StartGrab()
     {
         Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
-        if (Physics.Raycast(ray, out RaycastHit hit, dist, ~13))
+        if (Physics.Raycast(ray, out RaycastHit hit, dist, layerMask))
         {
             if (hit.rigidbody != null)
             {
                 rb = hit.rigidbody;
-                originalAngularDamping = rb.angularDamping;
-                rb.angularDamping = 10f;
                 moveOffset = rb.transform.InverseTransformPoint(hit.point);
                 isHolding = true;
             }
+            Debug.Log(hit.collider.gameObject.name);
         }
     }
 
@@ -70,7 +69,6 @@ public class ObjectMoverTool : CoreTool
     {
         if (rb != null)
         {
-            rb.angularDamping = originalAngularDamping;
             rb = null;
         }
 

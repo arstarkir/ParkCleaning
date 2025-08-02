@@ -20,6 +20,15 @@ public class MultiHealth : NetworkBehaviour
 
     private Dictionary<Transform, HealthEntry> tracked = new Dictionary<Transform, HealthEntry>();
 
+    Rigidbody rb;
+    float startMass;
+
+    private void Start()
+    {
+        rb = GetComponent<Rigidbody>();
+        startMass = rb.mass;
+    }
+
     private void Update()
     {
         if (!IsServer)
@@ -103,6 +112,8 @@ public class MultiHealth : NetworkBehaviour
                     break;
                 }
             }
+
+            rb.mass -= startMass / tracked.Count;
 
             if (allDead)
             {

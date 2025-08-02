@@ -1,10 +1,21 @@
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Interactions;
 
 public class AxeTool : CoreTool
 {
     [SerializeField] TriggerTracker triggerTracker;
+
+    public override void TryUse(InputAction.CallbackContext context)
+    {
+        if (!IsLocalPlayer || !Ready)
+            return;
+
+        if (context.interaction is TapInteraction)
+            base.TryUse(context);
+    }
 
     public override void Use()
     {
