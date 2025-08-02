@@ -37,7 +37,6 @@ public class PlayerController : NetworkBehaviour
     void Update()
     {
         PlayerMove();
-        Debug.Log(_moveInput);
     }
 
     public void OnMove(InputAction.CallbackContext context)

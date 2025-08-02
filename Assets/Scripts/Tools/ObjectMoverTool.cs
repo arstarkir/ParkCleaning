@@ -1,3 +1,5 @@
+using JetBrains.Rider.Unity.Editor;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Interactions;
@@ -44,10 +46,18 @@ public class ObjectMoverTool : CoreTool
             Vector3 currentPoint = rb.position + moveOffset;
 
             Vector3 force = (targetPos - currentPoint) * holdForce;
-            rb.AddForceAtPosition(force, currentPoint, ForceMode.Force);
 
-            rb.linearVelocity *= (1f - Time.fixedDeltaTime * damping);
+            RequestObjectMoveServerRpc(rb.GetComponent<NetworkObject>().NetworkObjectId, force);
         }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void RequestObjectMoveServerRpc(ulong objectId, Vector3 force)
+    {
+        NetworkObject movedObj = NetworkManager.Singleton.SpawnManager.SpawnedObjects[objectId];
+        Rigidbody temp = movedObj.GetComponent<Rigidbody>();
+        temp.AddForce(force, ForceMode.Force);
+        temp.linearVelocity *= (1f - Time.fixedDeltaTime * damping)/2;
     }
 
     private void StartGrab()

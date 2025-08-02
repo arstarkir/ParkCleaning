@@ -1,3 +1,4 @@
+using System;
 using Unity.Netcode;
 using Unity.Netcode.Components;
 using UnityEngine;
@@ -7,11 +8,6 @@ public class TreeDeath : CoreDeath
 {
     public GameObject leaves;
     [SerializeField] GameObject tree;
-
-    public override void OnNetworkSpawn()
-    {
-        GetComponent<Health>().onDeath.AddListener(OnDeath);
-    }
 
     public override void OnDeath()
     {
@@ -34,7 +30,15 @@ public class TreeDeath : CoreDeath
             t.tag = "Foliage";
         }
 
-        GetComponent<NetworkObject>().Despawn();
-        Destroy(gameObject);
+        NotifyClientOfDeathClientRpc(GetComponent<NetworkObject>().NetworkObjectId);
+        GetComponent<NetworkObject>().Despawn(true);
+    }
+
+    [ClientRpc]
+    public void NotifyClientOfDeathClientRpc(ulong objectId)
+    {
+        NetworkObject deadObj = NetworkManager.Singleton.SpawnManager.SpawnedObjects[objectId];
+        if(deadObj != null)
+            Destroy(deadObj.gameObject);
     }
 }

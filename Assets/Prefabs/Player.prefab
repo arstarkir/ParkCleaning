@@ -120,10 +120,8 @@ GameObject:
   m_Component:
   - component: {fileID: 158648344950853131}
   - component: {fileID: 4917998394418208790}
-  - component: {fileID: 5658334696750672735}
   - component: {fileID: 4609858904971642276}
   - component: {fileID: 904663491047235225}
-  - component: {fileID: 5499451260937679506}
   m_Layer: 6
   m_Name: ToolSlot
   m_TagString: Untagged
@@ -169,27 +167,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!135 &5658334696750672735
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2931184230675644514}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 0.75
-  m_Center: {x: 0, y: 0, z: 0.7}
 --- !u!114 &4609858904971642276
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -234,18 +211,6 @@ MonoBehaviour:
   layerMask:
     serializedVersion: 2
     m_Bits: 8247
---- !u!114 &5499451260937679506
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2931184230675644514}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 00742ef0b8e064c4d96e9afc1e65b62f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &6084679324635648165
 GameObject:
   m_ObjectHideFlags: 0
