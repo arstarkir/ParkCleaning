@@ -17,8 +17,18 @@ public class PlayerController : NetworkBehaviour
 
     void Start()
     {
-        if (!IsLocalPlayer)
+        if (!IsOwner)
+        {
+            GetComponent<PlayerInput>().DeactivateInput();
             this.enabled = false;
+            return;
+        }
+
+        var playerInput = GetComponent<PlayerInput>();
+
+        playerInput.SwitchCurrentControlScheme(Keyboard.current,Mouse.current);
+
+        playerInput.ActivateInput();
 
         rb = GetComponent<Rigidbody>();
         toolAniamtor = GetComponent<ToolHandler>().curTool.gameObject.GetComponent<Animator>();
@@ -27,6 +37,7 @@ public class PlayerController : NetworkBehaviour
     void Update()
     {
         PlayerMove();
+        Debug.Log(_moveInput);
     }
 
     public void OnMove(InputAction.CallbackContext context)

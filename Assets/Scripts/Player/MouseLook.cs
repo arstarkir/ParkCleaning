@@ -27,7 +27,11 @@ public class MouseLook : NetworkBehaviour
     void Start()
     {
         if (!IsLocalPlayer)
-            gameObject.SetActive(false);
+        {
+            GetComponent<Camera>().enabled = false;
+            this.enabled = false;
+            return;
+        }
 
         Cursor.lockState = cursorLockMode;
         originalRotation = transform.localRotation;
