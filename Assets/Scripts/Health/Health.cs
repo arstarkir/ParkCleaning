@@ -1,3 +1,6 @@
+using NUnit.Framework;
+using System.Collections;
+using System.Collections.Generic;
 using Unity.Netcode;
 using Unity.Netcode.Components;
 using UnityEngine;
@@ -10,8 +13,10 @@ public class Health : NetworkBehaviour
     public float regenSpeed = 5;
     public float regenDelayTime = 120;
     public float timeSinceDmg = 0;
+    public AnimationCurve magnitudeCurve = AnimationCurve.Constant(0,1,1);
 
-    [SerializeField] GameObject onDmgVFX;
+    private Coroutine shakeCoroutine;
+    [SerializeField] List<GameObject> onDmgVFXs = new List<GameObject>();
     public UnityEvent onDeath = new UnityEvent();
 
     private void Awake()
@@ -35,8 +40,11 @@ public class Health : NetworkBehaviour
     {
         curHealth.Value += amount;
 
-        if (amount < 0)
-            NotifyClientOfDmgClientRpc();
+        if (shakeCoroutine != null)
+            StopCoroutine(shakeCoroutine);
+
+        shakeCoroutine = StartCoroutine(Shake(0.5f));
+        NotifyClientOfDmgClientRpc();
 
         if (curHealth.Value > maxHealth)
             curHealth.Value = maxHealth;
@@ -57,12 +65,39 @@ public class Health : NetworkBehaviour
     public void NotifyClientOfDmgClientRpc()
     {
         timeSinceDmg = 0;
-        //onDmgVFX.GetComponent<ParticleSystem>().Play();
+        foreach(GameObject onDmgVFX in onDmgVFXs)
+        {
+            onDmgVFX.GetComponent<ParticleSystem>().Play();
+        }
     }
 
     [ServerRpc(RequireOwnership = false)]
     public void RequestSetHealthServerRpc(float amount, ServerRpcParams rpcParams = default)
     {
         curHealth.Value = amount;
+    }
+
+    IEnumerator Shake(float duration)
+    {
+        Vector3 originalPos = transform.localPosition;
+        Vector3 originalScale = transform.localScale;
+        float time = 0f;
+
+        while (time < duration)
+        {
+            float pX = Random.Range(-1f, 1f) * 0.02f;
+            float pY = Random.Range(-1f, 1f) * 0.02f;
+
+            float sZ = originalScale.y * magnitudeCurve.Evaluate(time * 2);
+
+            transform.localPosition = originalPos + new Vector3(pX, pY, 0);
+            transform.localScale = new Vector3(originalScale.x, originalScale.y, sZ);
+
+            time += Time.deltaTime;
+            yield return null;
+        }
+
+        transform.localPosition = originalPos;
+        transform.localScale = originalScale;
     }
 }

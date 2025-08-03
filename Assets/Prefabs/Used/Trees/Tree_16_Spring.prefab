@@ -266,7 +266,49 @@ MonoBehaviour:
   regenSpeed: 5
   regenDelayTime: 120
   timeSinceDmg: 0
-  onDmgVFX: {fileID: 0}
+  magnitudeCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: -1.8217272
+      outSlope: -1.8217272
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.26440513
+      value: 0.518326
+      inSlope: -0.35124302
+      outSlope: -0.35124302
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.7394916
+      value: 1.0500623
+      inSlope: 0.01404678
+      outSlope: 0.01404678
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.68502617
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: -0.19217151
+      outSlope: -0.19217151
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  onDmgVFXs: []
   onDeath:
     m_PersistentCalls:
       m_Calls:
