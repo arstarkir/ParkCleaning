@@ -20,6 +20,10 @@ public class AxeTool : CoreTool
     public override void Use()
     {
         animator.SetTrigger("Use");
+    }
+
+    public void TriggerChop()
+    {
         List<Collider> hits = triggerTracker.GetContents();
         foreach (Collider hit in hits)
         {

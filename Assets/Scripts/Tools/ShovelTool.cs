@@ -1,8 +1,10 @@
 using System.Collections.Generic;
+using System.Drawing;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Interactions;
+using static UnityEditor.PlayerSettings;
 
 public class ShovelTool : CoreTool
 {
@@ -23,6 +25,9 @@ public class ShovelTool : CoreTool
 
     public void TriggerDigRequest()
     {
+        if (!IsLocalPlayer)
+            return;
+
         if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out RaycastHit terrainHit, 4, layerMask))
         {
             Terrain terrain = terrainHit.collider.gameObject.GetComponent<Terrain>();
@@ -46,7 +51,6 @@ public class ShovelTool : CoreTool
         int startX = Mathf.Clamp(mapX - sRad, 0, data.heightmapResolution);
         int startZ = Mathf.Clamp(mapZ - sRad, 0, data.heightmapResolution);
         int size = sRad * 2;
-
         float[,] heights = data.GetHeights(startX, startZ, size, size);
 
         for (int x = 0; x < size; x++)
@@ -59,6 +63,25 @@ public class ShovelTool : CoreTool
             }
         }
 
+        data.SetHeights(startX, startZ, heights);
+        NotifyClientDigClientRpc(startX, startZ, size,sRad,strength);
+    }
+
+    [ClientRpc]
+    public void NotifyClientDigClientRpc(int startX, int startZ, int size, int sRad, float strength)
+    {
+        TerrainData data = Terrain.activeTerrain.terrainData;
+        float[,] heights = data.GetHeights(startX, startZ, size, size);
+
+        for (int x = 0; x < size; x++)
+        {
+            for (int z = 0; z < size; z++)
+            {
+                float distance = Vector2.Distance(new Vector2(x, z), new Vector2(sRad, sRad));
+                if (distance < sRad)
+                    heights[z, x] -= strength * (1 - (distance / sRad));
+            }
+        }
         data.SetHeights(startX, startZ, heights);
     }
 }
