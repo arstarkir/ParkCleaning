@@ -1,16 +1,20 @@
-using System.Collections.Generic;
-using System.Drawing;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Interactions;
-using static UnityEditor.PlayerSettings;
 
 public class ShovelTool : CoreTool
 {
     [SerializeField] LayerMask layerMask = ~6;
     [SerializeField] float digRadius = 1f;
     [SerializeField] float digStrength = 0.002f;
+
+    private TerrainManager terrainManager;
+
+    void Start()
+    {
+        terrainManager = FindAnyObjectByType<TerrainManager>();
+    }
 
     public override void TryUse(InputAction.CallbackContext context)
     {
@@ -70,6 +74,12 @@ public class ShovelTool : CoreTool
     [ClientRpc]
     public void NotifyClientDigClientRpc(int startX, int startZ, int size, int sRad, float strength)
     {
+        if (IsHost)
+        {
+            PaintTextureBasedOnHeightChange(Terrain.activeTerrain, terrainManager.GetOriginalHeights(), startX, startZ, size, sRad);
+            return;
+        }
+
         TerrainData data = Terrain.activeTerrain.terrainData;
         float[,] heights = data.GetHeights(startX, startZ, size, size);
 
@@ -83,5 +93,72 @@ public class ShovelTool : CoreTool
             }
         }
         data.SetHeights(startX, startZ, heights);
+
+        if (terrainManager != null)
+            PaintTextureBasedOnHeightChange(Terrain.activeTerrain, terrainManager.GetOriginalHeights(), startX, startZ, size, sRad);
+    }
+
+    void PaintTextureBasedOnHeightChange(Terrain terrain, float[,] originalHeights, int startX, int startZ, int size, int sRad)
+    {
+        TerrainData data = terrain.terrainData;
+
+        int alphaRes = data.alphamapResolution;
+        int heightRes = data.heightmapResolution;
+
+        int alphaStartX = Mathf.RoundToInt((float)startX / heightRes * alphaRes);
+        int alphaStartZ = Mathf.RoundToInt((float)startZ / heightRes * alphaRes);
+        int alphaSize = Mathf.RoundToInt((float)size / heightRes * alphaRes);
+
+        alphaStartX = Mathf.Clamp(alphaStartX, 0, alphaRes - 1);
+        alphaStartZ = Mathf.Clamp(alphaStartZ, 0, alphaRes - 1);
+        if (alphaStartX + alphaSize > alphaRes) alphaSize = alphaRes - alphaStartX;
+        if (alphaStartZ + alphaSize > alphaRes) alphaSize = alphaRes - alphaStartZ;
+
+        float[,] curHeights = data.GetHeights(startX, startZ, size, size);
+        float[,,] splatmaps = data.GetAlphamaps(alphaStartX, alphaStartZ, alphaSize, alphaSize);
+
+        float alphaRadius = (float)sRad / heightRes * alphaRes;
+        float centerX = alphaSize / 2f;
+        float centerY = alphaSize / 2f;
+
+        for (int y = 0; y < alphaSize; y++)
+        {
+            for (int x = 0; x < alphaSize; x++)
+            {
+                float dx = x - centerX;
+                float dy = y - centerY;
+                float dist = Mathf.Sqrt(dx * dx + dy * dy);
+
+                if (dist > alphaRadius)
+                    continue;
+
+                int hx = startX + Mathf.RoundToInt((float)x / alphaSize * size);
+                int hz = startZ + Mathf.RoundToInt((float)y / alphaSize * size);
+
+                hx = Mathf.Clamp(hx, 0, heightRes - 1);
+                hz = Mathf.Clamp(hz, 0, heightRes - 1);
+
+                int localX = Mathf.Clamp(hx - startX, 0, size - 1);
+                int localZ = Mathf.Clamp(hz - startZ, 0, size - 1);
+
+                if (localZ >= curHeights.GetLength(0) || localX >= curHeights.GetLength(1))
+                    continue;
+                if (hz >= originalHeights.GetLength(0) || hx >= originalHeights.GetLength(1))
+                    continue;
+
+                float diff = Mathf.Abs(curHeights[localZ, localX] - originalHeights[hx, hz]);
+
+                if (diff > 0.001f)
+                {
+                    for (int l = 0; l < splatmaps.GetLength(2); l++)
+                    {
+                        splatmaps[y, x, l] = 0;
+                    }
+                    splatmaps[y, x, 3] = 1;
+                }
+            }
+        }
+
+        data.SetAlphamaps(alphaStartX, alphaStartZ, splatmaps);
     }
 }

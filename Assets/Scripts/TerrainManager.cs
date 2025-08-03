@@ -4,10 +4,12 @@ using UnityEngine;
 public class TerrainManager : NetworkBehaviour
 {
     private float[,] originalHeights;
+    private float[,,] originalAlphamaps;
     private Terrain terrain;
     private TerrainData data;
 
     private const int CHUNK_SIZE = 64;
+    private const int TEXTURE_CHUNK_SIZE = 32;
 
     public override void OnNetworkSpawn()
     {
@@ -17,6 +19,7 @@ public class TerrainManager : NetworkBehaviour
 
         data = terrain.terrainData;
         originalHeights = data.GetHeights(0, 0, data.heightmapResolution, data.heightmapResolution);
+        originalAlphamaps = data.GetAlphamaps(0, 0, data.alphamapResolution, data.alphamapResolution);
 
         if (IsServer)
             NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
@@ -24,20 +27,42 @@ public class TerrainManager : NetworkBehaviour
 
     private void OnClientConnected(ulong clientId)
     {
-        int resolution = data.heightmapResolution - 1;
+        int heightRes = data.heightmapResolution - 1;
 
-        for (int x = 0; x < resolution; x += CHUNK_SIZE)
+        for (int x = 0; x < heightRes; x += CHUNK_SIZE)
         {
-            for (int z = 0; z < resolution; z += CHUNK_SIZE)
+            for (int z = 0; z < heightRes; z += CHUNK_SIZE)
             {
-                int width = Mathf.Min(CHUNK_SIZE, resolution - x);
-                int height = Mathf.Min(CHUNK_SIZE, resolution - z);
+                int width = Mathf.Min(CHUNK_SIZE, heightRes - x);
+                int height = Mathf.Min(CHUNK_SIZE, heightRes - z);
 
                 float[,] heights = data.GetHeights(x, z, width, height);
-                float[] flat = FlattenHeights(heights);
+                float[] flatHeights = FlattenHeights(heights);
 
-                SendTerrainChunkClientRpc(x, z, width, height, flat, new ClientRpcParams
-                { Send = new ClientRpcSendParams { TargetClientIds = new[] { clientId } } });
+                SendTerrainChunkClientRpc(x, z, width, height, flatHeights, new ClientRpcParams
+                {
+                    Send = new ClientRpcSendParams { TargetClientIds = new[] { clientId } }
+                });
+            }
+        }
+
+        int alphaRes = data.alphamapResolution - 1;
+        int layers = data.terrainLayers.Length;
+
+        for (int x = 0; x < alphaRes; x += TEXTURE_CHUNK_SIZE)
+        {
+            for (int z = 0; z < alphaRes; z += TEXTURE_CHUNK_SIZE)
+            {
+                int width = Mathf.Min(TEXTURE_CHUNK_SIZE, alphaRes - x);
+                int height = Mathf.Min(TEXTURE_CHUNK_SIZE, alphaRes - z);
+
+                float[,,] alphaChunk = data.GetAlphamaps(x, z, width, height);
+                float[] flatAlpha = FlattenAlphamaps(alphaChunk);
+
+                SendTerrainTextureChunkClientRpc(x, z, width, height, layers, flatAlpha, new ClientRpcParams
+                {
+                    Send = new ClientRpcSendParams { TargetClientIds = new[] { clientId } }
+                });
             }
         }
     }
@@ -49,16 +74,47 @@ public class TerrainManager : NetworkBehaviour
         Terrain.activeTerrain.terrainData.SetHeights(startX, startZ, heights);
     }
 
+    [ClientRpc]
+    private void SendTerrainTextureChunkClientRpc(int startX, int startZ, int width, int height, int layers, float[] flatAlpha, ClientRpcParams rpcParams = default)
+    {
+        if (IsServer) return;
+
+        TerrainData tData = Terrain.activeTerrain.terrainData;
+        int clientLayers = tData.terrainLayers.Length;
+
+        int usedLayers = Mathf.Min(layers, clientLayers);
+
+        float[,,] alpha = new float[width, height, clientLayers];
+        float[,,] receivedAlpha = UnflattenAlphamaps(flatAlpha, width, height, layers);
+
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                for (int l = 0; l < usedLayers; l++)
+                {
+                    alpha[x, y, l] = receivedAlpha[x, y, l];
+                }
+            }
+        }
+
+        tData.SetAlphamaps(startX, startZ, alpha);
+    }
+
     public void ResetTerrain()
     {
-        if (data == null || originalHeights == null)
+        if (data == null)
             return;
 
-        data.SetHeights(0, 0, originalHeights);
+        if (originalHeights != null)
+            data.SetHeights(0, 0, originalHeights);
+
+        if (originalAlphamaps != null)
+            data.SetAlphamaps(0, 0, originalAlphamaps);
     }
 
     void OnApplicationQuit()
-    { 
+    {
         ResetTerrain();
     }
 
@@ -97,5 +153,48 @@ public class TerrainManager : NetworkBehaviour
             }
         }
         return heights;
+    }
+
+    private float[] FlattenAlphamaps(float[,,] alpha)
+    {
+        int w = alpha.GetLength(0);
+        int h = alpha.GetLength(1);
+        int l = alpha.GetLength(2);
+
+        float[] flat = new float[w * h * l];
+        int i = 0;
+        for (int x = 0; x < w; x++)
+        {
+            for (int y = 0; y < h; y++)
+            {
+                for (int z = 0; z < l; z++)
+                {
+                    flat[i++] = alpha[x, y, z];
+                }
+            }
+        }
+        return flat;
+    }
+
+    private float[,,] UnflattenAlphamaps(float[] flat, int width, int height, int layers)
+    {
+        float[,,] alpha = new float[width, height, layers];
+        int i = 0;
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                for (int z = 0; z < layers; z++)
+                {
+                    alpha[x, y, z] = flat[i++];
+                }
+            }
+        }
+        return alpha;
+    }
+
+    public float[,] GetOriginalHeights()
+    {
+        return originalHeights;
     }
 }
