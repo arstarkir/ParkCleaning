@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.radiatoryang.hedera": {
+      "version": "https://github.com/radiatoryang/hedera.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "cf723ccb3daf70752ada13d5c3038ec9b8dad1b8"
+    },
     "com.unity.ai.navigation": {
       "version": "2.0.5",
       "depth": 0,
