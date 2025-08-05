@@ -9,7 +9,7 @@ public enum ExtractionType
 }
 
 [CreateAssetMenu(fileName = "NewRelic", menuName = "SO/Relic")]
-public class RelicsSO : ScriptableObject
+public class RelicData : ScriptableObject
 {
     public GameObject pref;
     public AudioClip onPickupSound;

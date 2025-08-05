@@ -8,6 +8,7 @@ public abstract class CoreTool : NetworkBehaviour
     [SerializeField] float cooldown = 1f;
     float timer;
     public float dmg = 3;
+    public ExtractionType extraction = ExtractionType.RemoveFoliage;
 
     [HideInInspector] public NetworkAnimator animator;
 
