@@ -184,6 +184,7 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   cooldown: 0
   dmg: 0
+  extraction: 2
   animator: {fileID: 0}
   cam: {fileID: 3415166758900065827}
   dist: 2
@@ -207,6 +208,7 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   cooldown: 0.25
   dmg: 3
+  extraction: 2
   animator: {fileID: 0}
   cam: {fileID: 3415166758900065827}
   maxDist: 2
@@ -877,6 +879,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4533358838165930669, guid: 790978dbdd9610248801c2865fa44210, type: 3}
+      propertyPath: extraction
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4533358838165930669, guid: 790978dbdd9610248801c2865fa44210, type: 3}
       propertyPath: digStrength
       value: 0.001
       objectReference: {fileID: 0}
@@ -956,6 +962,10 @@ PrefabInstance:
     - target: {fileID: 310094868155951726, guid: 1fa4863a1119b794b8451f536d2896e3, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: -55.64
+      objectReference: {fileID: 0}
+    - target: {fileID: 3905026953748146333, guid: 1fa4863a1119b794b8451f536d2896e3, type: 3}
+      propertyPath: extraction
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6281593428217936078, guid: 1fa4863a1119b794b8451f536d2896e3, type: 3}
       propertyPath: m_Name

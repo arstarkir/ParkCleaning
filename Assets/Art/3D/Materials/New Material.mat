@@ -148,7 +148,7 @@ Material:
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _WindNoiseContrast: {r: 0, g: 1, b: 0, a: 0}
     - _WindNoiseScale: {r: 40, g: 100, b: 0, a: 0}
-    - _trackerPosition: {r: -10.314437, g: -2488.9788, b: -3.805973, a: 0}
+    - _trackerPosition: {r: -10.314437, g: -5800.3955, b: -3.805973, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!114 &3918462030145293735

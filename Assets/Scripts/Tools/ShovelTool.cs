@@ -36,7 +36,10 @@ public class ShovelTool : CoreTool
         {
             Terrain terrain = terrainHit.collider.gameObject.GetComponent<Terrain>();
             if (terrain != null)
+            {
                 RequestDigServerRpc(terrainHit.point, digRadius, digStrength);
+                RelicAreaSpawn.instance.RequestExtractionPrefomedServerRpc(extraction, terrainHit.point);
+            }
         }
     }
 
@@ -68,6 +71,7 @@ public class ShovelTool : CoreTool
         }
 
         data.SetHeights(startX, startZ, heights);
+        
         NotifyClientDigClientRpc(startX, startZ, size,sRad,strength);
     }
 

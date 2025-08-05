@@ -21,4 +21,9 @@ public class TriggerTracker : MonoBehaviour
         inside.RemoveAll(col => col == null);
         return inside;
     }
+
+    public bool DoseContain(Collider col)
+    {
+        return inside.Contains(col);
+    }
 }
